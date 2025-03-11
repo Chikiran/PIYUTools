@@ -3,9 +3,6 @@
 </div>
 
 # E-PIYUTools
-
-## Features
-
 - **Extract Schedule**: Extract your schedule from the COR page and save it as CSV.
 - **Generate Schedule**: Automatically generate and customize your schedule on sched.chikiran.com.
 - **Calculate GWA**: Calculate your Midterm and Final General Weighted Average (GWA) from the course card.
