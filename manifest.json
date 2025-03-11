@@ -8,7 +8,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "FITTools.png"
+    "default_icon": "EPIYUTools_Logo.png"
   },
   "permissions": [
     "storage"
