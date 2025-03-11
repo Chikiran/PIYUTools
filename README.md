@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="FITTOOLS.png" alt="E-PIYUTools" />
+  <img src="FITTools.png" alt="E-PIYUTools" />
 </div>
 
 # E-PIYUTools
