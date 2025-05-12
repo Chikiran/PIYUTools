@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="icon_v2.png" alt="PIYUTools" />
+  <img src="marq.png" alt="PIYUTools" />
 </div>
 
 # PIYUTools
