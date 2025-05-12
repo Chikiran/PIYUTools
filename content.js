@@ -55,7 +55,7 @@ function extractScheduleForSchedinator() {
             return { error: "Error: No schedule data found." };
         }
 
-        // First, get the data in CSV format similar to what the site expects
+        // Get the data in CSV format similar to what the site expects
         const entries = [];
         const uniqueDays = new Set();
         let earliestTime = null;
@@ -193,34 +193,115 @@ function calculateGWA() {
         let totalUnitsFinal = 0;
         let totalWeightedFinal = 0;
 
+        // Special grade messages
+        const specialGrades = {
+            '9.5': 'Pending Balance',
+            '9.0': 'Incomplete',
+            '8.0': 'Credited',
+            '7.0': 'Dropped',
+            '0.0': 'Excessive Absences'
+        };
+
+        // Add CSS for custom tooltip if not already added
+        if (!document.getElementById('tooltip-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'tooltip-styles';
+            styleSheet.textContent = `
+                .special-grade {
+                    position: relative;
+                    color: #ff0000 !important;
+                    font-weight: bold;
+                    background-color: #fff0f0;
+                    border-radius: 4px;
+                    padding: 2px 4px;
+                    cursor: pointer;
+                }
+                .special-grade:hover::after {
+                    content: attr(data-tooltip);
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    bottom: 100%;
+                    margin-bottom: 5px;
+                    background-color: #333;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+                .special-grade:hover::before {
+                    content: '';
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    bottom: 100%;
+                    border: 6px solid transparent;
+                    border-top-color: #333;
+                    margin-bottom: -6px;
+                    z-index: 1000;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+
+        // Process each row except the last one if it's already a GWA row
         rows.forEach(row => {
+            // Skip if GWA row
+            if (row.classList.contains('gwa-row')) {
+                return;
+            }
+
             if (row.cells && row.cells.length >= 6) {
                 const units = parseFloat(row.cells[3].innerText);
-                const midtermGrade = parseFloat(row.cells[4].innerText);
-                const finalGrade = parseFloat(row.cells[5].innerText);
+                const midtermCell = row.cells[4];
+                const finalCell = row.cells[5];
+                const midtermGradeText = midtermCell.innerText.trim();
+                const finalGradeText = finalCell.innerText.trim();
 
-                if (!isNaN(units) && !isNaN(midtermGrade)) {
-                    totalUnitsMidterm += units;
-                    totalWeightedMidterm += units * midtermGrade;
+                // Midterm Grade
+                if (specialGrades.hasOwnProperty(midtermGradeText)) {
+                    // Style 
+                    midtermCell.className = 'special-grade';
+                    midtermCell.setAttribute('data-tooltip', specialGrades[midtermGradeText]);
+                    // Don't include in GWA calculation
+                } else {
+                    const midtermGrade = parseFloat(midtermGradeText);
+                    if (!isNaN(units) && !isNaN(midtermGrade) && midtermGrade >= 0 && midtermGrade <= 4.0) {
+                        totalUnitsMidterm += units;
+                        totalWeightedMidterm += units * midtermGrade;
+                    }
                 }
 
-                if (!isNaN(units) && !isNaN(finalGrade)) {
-                    totalUnitsFinal += units;
-                    totalWeightedFinal += units * finalGrade;
+                // Final Grade
+                if (specialGrades.hasOwnProperty(finalGradeText)) {
+                    // Style 
+                    finalCell.className = 'special-grade';
+                    finalCell.setAttribute('data-tooltip', specialGrades[finalGradeText]);
+                    // Don't include in GWA calculation
+                } else {
+                    const finalGrade = parseFloat(finalGradeText);
+                    if (!isNaN(units) && !isNaN(finalGrade) && finalGrade >= 0 && finalGrade <= 4.0) {
+                        totalUnitsFinal += units;
+                        totalWeightedFinal += units * finalGrade;
+                    }
                 }
             }
         });
 
+        // Calculate GWA
         const midtermGWA = (totalWeightedMidterm / totalUnitsMidterm).toFixed(2);
         const finalGWA = (totalWeightedFinal / totalUnitsFinal).toFixed(2);
 
-        // Remove existing GWA row (well if it exists)
+        // Remove existing GWA row if it exists
         const existingGWARow = table.querySelector('.gwa-row');
         if (existingGWARow) {
             existingGWARow.remove();
         }
 
-        // Create and insert GWA row
+        // Create and insert GWA row at the end of le table
         const gwaRow = document.createElement('tr');
         gwaRow.className = 'gwa-row';
         gwaRow.style.backgroundColor = '#f3f4f6';
@@ -233,10 +314,12 @@ function calculateGWA() {
         `;
 
         const tbody = table.querySelector('tbody');
-        const lastContentRow = tbody.lastElementChild;
-        tbody.insertBefore(gwaRow, lastContentRow);
+        tbody.appendChild(gwaRow);
 
-        return { midtermGWA, finalGWA };
+        return { 
+            midtermGWA: midtermGWA.toString(), 
+            finalGWA: finalGWA.toString() 
+        };
     } catch (error) {
         console.error('Error calculating GWA:', error);
         return { error: 'Failed to calculate GWA' };

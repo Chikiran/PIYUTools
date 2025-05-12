@@ -1,27 +1,27 @@
 {
   "manifest_version": 3,
-  "name": "E-PIYUTools",
-  "version": "2.0",
+  "name": "PIYUTools",
+  "version": "2.2",
   "description": "Tools for FEU TECH Student Portal",
   "icons": {
-    "128": "128.png"
+    "128": "icon_v2.png"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "EPIYUTools_Logo.png"
+    "default_icon": "logo_v2.png"
   },
   "permissions": [
     "storage"
   ],
   "content_scripts": [
     {
-      "matches": ["https://students.feutech.edu.ph/accounts/*"],
+      "matches": ["https://solar.feutech.edu.ph/student/*"],
       "js": ["content.js"]
     }
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "epiyutools@chikiran"
+      "id": "piyutools@chikiran"
     }
   }
 }

@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="128.png" alt="E-PIYUTools" />
+  <img src="icon_v2.png" alt="PIYUTools" />
 </div>
 
-# E-PIYUTools
+# PIYUTools
 - **Extract Schedule**: Extract your schedule from the COR page and save it as CSV.
 - **Generate Schedule**: Automatically generate and customize your schedule on sched.chikiran.com.
 - **Calculate GWA**: Calculate your Midterm and Final General Weighted Average (GWA) from the course card.
@@ -11,7 +11,7 @@
 
 ### Chrome
 - Visit the [Chrome Web Store](https://chrome.google.com/webstore/).
-- Search for "E-PIYUTools".
+- Search for "PIYUTools".
 - Click on "Add to Chrome" to install the extension.
 
 ### Manual Installation
